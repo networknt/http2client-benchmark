@@ -1,16 +1,17 @@
 package com.networknt.undertow;
 
+import io.undertow.UndertowOptions;
 import io.undertow.client.*;
+import io.undertow.connector.ByteBufferPool;
+import io.undertow.protocols.ssl.UndertowXnioSsl;
+import io.undertow.server.DefaultByteBufferPool;
 import io.undertow.util.AttachmentKey;
 import io.undertow.util.Headers;
 import io.undertow.util.Methods;
 import io.undertow.util.StringReadChannelListener;
-import org.xnio.ChannelListeners;
-import org.xnio.IoUtils;
-import org.xnio.OptionMap;
-import org.xnio.Options;
-import org.xnio.Xnio;
+import org.xnio.*;
 import org.xnio.channels.StreamSinkChannel;
+import org.xnio.ssl.XnioSsl;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -30,21 +31,28 @@ import java.util.concurrent.CountDownLatch;
 /**
  * Created by stevehu on 2017-03-19.
  */
-public class Http2ClientExample {
+public class UndertowHttp2Client {
     private static final AttachmentKey<String> RESPONSE_BODY = AttachmentKey.create(String.class);
     private static final char[] STORE_PASSWORD = "password".toCharArray();
-
+    private static final ByteBufferPool pool = new DefaultByteBufferPool(true, 8192 * 3, 1000, 10, 100);
+    private static final OptionMap.Builder builder =
+            OptionMap.builder()
+                .set(Options.WORKER_IO_THREADS, 8)
+                .set(Options.TCP_NODELAY, true)
+                .set(Options.KEEP_ALIVE, true)
+                .set(Options.WORKER_NAME, "Client");
+    private final static OptionMap defaultOption = builder.getMap();
 
     public static void main(String[] args) throws Exception {
 
-        final UndertowHttp2Client client = UndertowHttp2Client.getInstance();
-
+        final UndertowClient client = UndertowClient.getInstance();
         final CountDownLatch latch = new CountDownLatch(1);
-
-        final ClientConnection connection = client.connect(new URI("https://localhost:8443"), Xnio.getInstance().createWorker(null, DEFAULT_OPTIONS), DefaultServer.getBufferPool(), OptionMap.EMPTY).get();
+        SSLContext clientSslContext = createSSLContext(loadKeyStore("client.keystore"), loadKeyStore("client.truststore"));
+        XnioSsl ssl = new UndertowXnioSsl(Xnio.getInstance(), OptionMap.EMPTY, clientSslContext);
+        final ClientConnection connection = client.connect(new URI("https://localhost:8443"), Xnio.getInstance().createWorker(null, defaultOption), ssl, pool, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
         try {
-            ClientRequest request = new ClientRequest().setPath("/1324").setMethod(Methods.GET);
-            request.getRequestHeaders().put(Headers.HOST, DefaultServer.getHostAddress());
+            ClientRequest request = new ClientRequest().setPath("/").setMethod(Methods.GET);
+            request.getRequestHeaders().put(Headers.HOST, "localhost");
             final List<ClientResponse> responses = new CopyOnWriteArrayList<>();
             request.getRequestHeaders().add(Headers.CONNECTION, Headers.CLOSE.toString());
             connection.sendRequest(request, createClientCallback(responses, latch));
@@ -58,7 +66,7 @@ public class Http2ClientExample {
 
     }
 
-    private ClientCallback<ClientExchange> createClientCallback(final List<ClientResponse> responses, final CountDownLatch latch) {
+    private static ClientCallback<ClientExchange> createClientCallback(final List<ClientResponse> responses, final CountDownLatch latch) {
         return new ClientCallback<ClientExchange>() {
             @Override
             public void completed(ClientExchange result) {
@@ -114,7 +122,7 @@ public class Http2ClientExample {
         String storeLoc = System.getProperty(name);
         final InputStream stream;
         if(storeLoc == null) {
-            stream = Http2ClientExample.class.getClassLoader().getResourceAsStream(name);
+            stream = UndertowHttp2Client.class.getClassLoader().getResourceAsStream(name);
         } else {
             stream = Files.newInputStream(Paths.get(storeLoc));
         }
@@ -129,7 +137,7 @@ public class Http2ClientExample {
         }
     }
 
-    static char[] password(String name) {
+    private static char[] password(String name) {
         String pw = System.getProperty(name + ".password");
         return pw != null ? pw.toCharArray() : STORE_PASSWORD;
     }

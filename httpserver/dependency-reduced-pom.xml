@@ -4,7 +4,6 @@
     <artifactId>oss-parent</artifactId>
     <groupId>org.sonatype.oss</groupId>
     <version>5</version>
-    <relativePath>../pom.xml/pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.swagger</groupId>

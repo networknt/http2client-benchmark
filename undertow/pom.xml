@@ -15,14 +15,14 @@
     <name>undertow-client</name>
 
     <properties>
-        <main.class>com.networknt.undertow.Http2ClientExample</main.class>
+        <main.class>com.networknt.undertow.UndertowHttp2Client</main.class>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>io.undertow</groupId>
             <artifactId>undertow-core</artifactId>
-            <version>2.0.0.Alpha2-SNAPSHOT</version>
+            <version>1.4.13.Final-SNAPSHOT</version>
         </dependency>
 
         <!-- Jetty util provides a handy TRUST_ALL_CERTS SSL trust manager. -->
