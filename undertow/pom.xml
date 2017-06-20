@@ -22,7 +22,7 @@
         <dependency>
             <groupId>io.undertow</groupId>
             <artifactId>undertow-core</artifactId>
-            <version>1.4.13.Final-SNAPSHOT</version>
+            <version>1.4.16.Final</version>
         </dependency>
 
         <!-- Jetty util provides a handy TRUST_ALL_CERTS SSL trust manager. -->
