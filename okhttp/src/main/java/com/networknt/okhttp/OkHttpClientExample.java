@@ -17,12 +17,10 @@ public class OkHttpClientExample {
     public static void main(String[] args) throws Exception {
         OkHttpClient client = getUnsafeOkHttpClient();
         Request request = new Request.Builder()
-                //.url("https://localhost:8443") // The Http2Server should be running here.
-                .url("https://www.cloudflare.com/")
+                .url("https://localhost:8443") // The Http2Server should be running here.
                 .build();
         long startTime = System.nanoTime();
         for (int i=0; i<3; i++) {
-            Thread.sleep(1000); // http://stackoverflow.com/questions/32625035/when-using-http2-in-okhttp-why-multi-requests-to-the-same-host-didnt-use-just
             client.newCall(request).enqueue(new Callback() {
                 public void onFailure(Call call, IOException e) {
                     e.printStackTrace();
@@ -44,7 +42,6 @@ public class OkHttpClientExample {
             sslContext.init(null, TRUST_ALL_CERTS, new java.security.SecureRandom());
             // Create an ssl socket factory with our all-trusting manager
             final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-
             OkHttpClient okHttpClient = new OkHttpClient();
             okHttpClient.newBuilder().sslSocketFactory(sslSocketFactory).hostnameVerifier((hostname, session) -> true);
             return okHttpClient;
