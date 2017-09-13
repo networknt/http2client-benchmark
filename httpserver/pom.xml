@@ -6,9 +6,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.swagger</groupId>
-    <artifactId>swagger-light-java</artifactId>
+    <artifactId>swagger-light-4j</artifactId>
     <packaging>jar</packaging>
-    <name>swagger-light-java</name>
+    <name>swagger-light-4j</name>
     <version>1.0.0</version>
     <prerequisites>
         <maven>2.2.0</maven>
@@ -17,12 +17,11 @@
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.light-java>1.4.0</version.light-java>
-        <version.light-java-rest>1.4.0</version.light-java-rest>
-        <version.jackson>2.8.2</version.jackson>
+        <version.light-4j>1.4.3</version.light-4j>
+        <version.light-rest-4j>1.4.3</version.light-rest-4j>
+        <version.jackson>2.9.0</version.jackson>
         <version.slf4j>1.7.21</version.slf4j>
-        <version.jose4j>0.5.2</version.jose4j>
-        <version.antlr4>4.5.3</version.antlr4>
+        <version.jose4j>0.5.5</version.jose4j>
         <version.commons-lang>2.6</version.commons-lang>
         <version.commons.io>2.5</version.commons.io>
         <version.commons.codec>1.10</version.commons.codec>
@@ -30,8 +29,7 @@
         <version.logback>1.1.7</version.logback>
         <version.junit>4.12</version.junit>
         <version.mockito>2.1.0-beta.124</version.mockito>
-        <version.undertow>1.4.11.Final</version.undertow>
-        <version.jsonpath>2.2.0</version.jsonpath>
+        <version.undertow>1.4.19.Final</version.undertow>
         <version.swagger>1.5.10</version.swagger>
     </properties>
 
@@ -39,107 +37,107 @@
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>config</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>utility</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>security</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>client</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>audit</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>info</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>status</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>exception</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>body</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>mask</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>metrics</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>handler</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>sanitizer</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>traceability</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>correlation</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>service</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>registry</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>balance</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>cluster</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>consul</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>server</artifactId>
-            <version>${version.light-java}</version>
+            <version>${version.light-4j}</version>
         </dependency>
 
         <dependency>
