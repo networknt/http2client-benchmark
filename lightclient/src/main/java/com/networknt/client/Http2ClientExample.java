@@ -23,15 +23,14 @@ public class Http2ClientExample {
     public static void main(String[] args) throws Exception {
         long startTime = System.nanoTime();
         Http2ClientExample e = new Http2ClientExample();
-        //e.testMultipleHttp2Get();
-        e.testMultipleHttp2Post();
+        //e.testMultipleHttp2Get(1000);
+        e.testMultipleHttp2Post(1000);
         long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
         System.out.println("duration = " + duration);
         System.exit(0);
     }
 
-    public void testMultipleHttp2Get() throws Exception {
-        final int round = 10;
+    public void testMultipleHttp2Get(int round) throws Exception {
         final Http2Client client = Http2Client.getInstance();
         final List<AtomicReference<ClientResponse>> references = new CopyOnWriteArrayList<>();
         final CountDownLatch latch = new CountDownLatch(round);
@@ -61,8 +60,7 @@ public class Http2ClientExample {
         }
     }
 
-    public void testMultipleHttp2Post() throws Exception {
-        final int round = 1000;
+    public void testMultipleHttp2Post(int round) throws Exception {
         final Http2Client client = Http2Client.getInstance();
         final List<AtomicReference<ClientResponse>> references = new CopyOnWriteArrayList<>();
         final CountDownLatch latch = new CountDownLatch(round);
@@ -75,6 +73,7 @@ public class Http2ClientExample {
                         AtomicReference<ClientResponse> reference = new AtomicReference<>();
                         references.add(i, reference);
                         final ClientRequest request = new ClientRequest().setMethod(Methods.POST).setPath("/post");
+                        request.getRequestHeaders().put(Headers.TRANSFER_ENCODING, "chunked");
                         request.getRequestHeaders().put(Headers.HOST, "localhost");
                         connection.sendRequest(request, client.createClientCallback(reference, latch, "post"));
                     }
