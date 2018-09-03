@@ -17,8 +17,14 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>3.8.1</version>
+            <version>3.11.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp-tls</artifactId>
+            <version>3.11.0</version>
+        </dependency>
+
         <!-- Jetty util provides a handy TRUST_ALL_CERTS SSL trust manager. -->
         <!-- To get rid of this dependency, copy and paste the TRUST_ALL_CERTS implementation (15 lines of code). -->
         <dependency>

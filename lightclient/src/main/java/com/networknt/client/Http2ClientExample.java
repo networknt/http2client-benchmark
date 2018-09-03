@@ -23,8 +23,8 @@ public class Http2ClientExample {
     public static void main(String[] args) throws Exception {
         long startTime = System.nanoTime();
         Http2ClientExample e = new Http2ClientExample();
-        //e.testMultipleHttp2Get(1000);
-        e.testMultipleHttp2Post(1000);
+        e.testMultipleHttp2Get(10000);
+        e.testMultipleHttp2Post(10000);
         long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
         System.out.println("duration = " + duration);
         System.exit(0);
