@@ -34,7 +34,7 @@ public class Http2ClientExample {
         final Http2Client client = Http2Client.getInstance();
         final List<AtomicReference<ClientResponse>> references = new CopyOnWriteArrayList<>();
         final CountDownLatch latch = new CountDownLatch(round);
-        final ClientConnection connection = client.connect(new URI("https://localhost:8443"), Http2Client.WORKER, Http2Client.SSL, Http2Client.POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
+        final ClientConnection connection = client.connect(new URI("https://localhost:8443"), Http2Client.WORKER, Http2Client.SSL, Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
         try {
             connection.getIoThread().execute(new Runnable() {
                 @Override
@@ -64,7 +64,7 @@ public class Http2ClientExample {
         final Http2Client client = Http2Client.getInstance();
         final List<AtomicReference<ClientResponse>> references = new CopyOnWriteArrayList<>();
         final CountDownLatch latch = new CountDownLatch(round);
-        final ClientConnection connection = client.connect(new URI("https://localhost:8443"), Http2Client.WORKER, Http2Client.SSL, Http2Client.POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
+        final ClientConnection connection = client.connect(new URI("https://localhost:8443"), Http2Client.WORKER, Http2Client.SSL, Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
         try {
             connection.getIoThread().execute(new Runnable() {
                 @Override
