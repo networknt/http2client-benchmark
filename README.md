@@ -1,5 +1,13 @@
 ### http2client-benchmark
 
+[Stack Overflow](https://stackoverflow.com/questions/tagged/light-4j) |
+[Google Group](https://groups.google.com/forum/#!forum/light-4j) |
+[Gitter Chat](https://gitter.im/networknt/light-4j) |
+[Subreddit](https://www.reddit.com/r/lightapi/) |
+[Youtube Channel](https://www.youtube.com/channel/UCHCRMWJVXw8iB7zKxF55Byw) |
+[Documentation](https://doc.networknt.com) |
+[Contribution Guide](https://doc.networknt.com/contribute/) |
+
 HTTP/2 client raw benchmark against light-4j server with both 10k get requests and 10k post requests. The light-client returns in about 8 seconds on my desktop computer. Trying to compare with OkHttp but got trouble to get TLS works with it. Any help is much appreciated. 
 
 Here is the step to do the test on your computer.
