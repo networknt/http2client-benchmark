@@ -58,7 +58,7 @@ public class Http2ClientExample {
                 startTime = System.nanoTime();
                 e.testMultipleJdk11ClientPost(10000);
                 duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-                if(i > 1) System.out.println("duration jdk11 client with 10K post requests = " + duration + "milliseconds");
+                if(i > 1) System.out.println("duration jdk11 client with 10K post requests = " + duration + " milliseconds");
             } else if (cl.equals("okhttp")) {
                 long startTime = System.nanoTime();
                 e.testMultipleOkhttpClientGet(10000);
