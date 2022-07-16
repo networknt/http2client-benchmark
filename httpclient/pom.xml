@@ -27,7 +27,7 @@
         <version.exec-maven>1.6.0</version.exec-maven>
         <version.maven-surefire>2.22.2</version.maven-surefire>
         <version.maven-source>3.1.0</version.maven-source>
-        <version.undertow>2.2.14.Final</version.undertow>
+        <version.undertow>2.2.18.Final</version.undertow>
 
     </properties>
 
