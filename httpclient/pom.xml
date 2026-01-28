@@ -28,7 +28,7 @@
         <version.maven-surefire>2.22.2</version.maven-surefire>
         <version.maven-source>3.1.0</version.maven-source>
         <version.undertow>2.3.22.Final</version.undertow>
-
+        <version.assertj>3.27.7</version.assertj>
     </properties>
 
     <dependencies>
@@ -50,7 +50,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>2.1.0</version>
+            <version>${version.assertj}</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
