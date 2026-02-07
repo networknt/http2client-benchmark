@@ -1,8 +1,10 @@
 package com.networknt.client;
 
 import com.networknt.client.ssl.ClientX509ExtendedTrustManager;
+import com.networknt.client.simplepool.SimpleConnectionHolder;
 import com.networknt.client.ssl.TLSConfig;
-import com.networknt.utility.TlsUtil;
+import com.networknt.config.TlsUtil;
+import com.networknt.exception.ClientException;
 import io.undertow.UndertowOptions;
 import io.undertow.client.ClientConnection;
 import io.undertow.client.ClientRequest;
@@ -40,45 +42,51 @@ import static com.networknt.client.Http2Client.*;
  * Created by stevehu on 2017-03-19.
  */
 public class Http2ClientExample {
-    static final MediaType TEXT
-            = MediaType.get("text/plain; charset=utf-8");
+    static final MediaType TEXT = MediaType.get("text/plain; charset=utf-8");
 
     public static void main(String[] args) throws Exception {
         String cl = args[0];
-        if(cl == null) System.out.println("java -jar httpclient-1.0-SNAPSHOT.jar jdk11 | okhttp | light");
+        if (cl == null)
+            System.out.println("java -jar httpclient-1.0-SNAPSHOT.jar jdk11 | okhttp | light");
 
         Http2ClientExample e = new Http2ClientExample();
         for (int i = 0; i <= 2; i++) {
-            if(cl.equals("jdk11")) {
+            if (cl.equals("jdk11")) {
                 long startTime = System.nanoTime();
                 e.testMultipleJdk11ClientGet(10000);
                 long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-                if(i > 1) System.out.println("duration jdk11 client with 10K get requests = " + duration + " milliseconds");
+                if (i > 1)
+                    System.out.println("duration jdk11 client with 10K get requests = " + duration + " milliseconds");
 
                 startTime = System.nanoTime();
                 e.testMultipleJdk11ClientPost(10000);
                 duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-                if(i > 1) System.out.println("duration jdk11 client with 10K post requests = " + duration + " milliseconds");
+                if (i > 1)
+                    System.out.println("duration jdk11 client with 10K post requests = " + duration + " milliseconds");
             } else if (cl.equals("okhttp")) {
                 long startTime = System.nanoTime();
                 e.testMultipleOkhttpClientGet(10000);
                 long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-                if(i > 1) System.out.println("duration okhttp client with 10K get requests = " + duration + " milliseconds");
+                if (i > 1)
+                    System.out.println("duration okhttp client with 10K get requests = " + duration + " milliseconds");
 
                 startTime = System.nanoTime();
                 e.testMultipleOkhttpClientPost(10000);
                 duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-                if(i > 1) System.out.println("duration okhttp client with 10K post requests = " + duration + " milliseconds");
+                if (i > 1)
+                    System.out.println("duration okhttp client with 10K post requests = " + duration + " milliseconds");
             } else if (cl.equals("light")) {
                 long startTime = System.nanoTime();
                 e.testMultipleLightClientGet(10000);
                 long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-                if(i > 1) System.out.println("duration light client with 10K get requests = " + duration + " milliseconds");
+                if (i > 1)
+                    System.out.println("duration light client with 10K get requests = " + duration + " milliseconds");
 
                 startTime = System.nanoTime();
                 e.testMultipleLightClientPost(10000);
                 duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-                if(i > 1) System.out.println("duration light client with 10K post requests = " + duration + " milliseconds");
+                if (i > 1)
+                    System.out.println("duration light client with 10K post requests = " + duration + " milliseconds");
             } else {
                 System.out.println("invalid client selected " + cl);
             }
@@ -90,7 +98,20 @@ public class Http2ClientExample {
         final Http2Client client = Http2Client.getInstance();
         final List<AtomicReference<ClientResponse>> references = new CopyOnWriteArrayList<>();
         final CountDownLatch latch = new CountDownLatch(round);
-        final ClientConnection connection = client.connect(new URI("https://localhost:8443"), Http2Client.WORKER, Http2Client.SSL, Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
+        final SimpleConnectionHolder.ConnectionToken token;
+
+        try {
+
+            token = client.borrow(new URI("https://localhost:8443"), Http2Client.WORKER, Http2Client.SSL,
+                    Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true));
+
+        } catch (Exception e) {
+
+            throw new ClientException(e);
+
+        }
+
+        final ClientConnection connection = (ClientConnection) token.getRawConnection();
         try {
             connection.getIoThread().execute(new Runnable() {
                 @Override
@@ -98,7 +119,8 @@ public class Http2ClientExample {
                     for (int i = 0; i < round; i++) {
                         AtomicReference<ClientResponse> reference = new AtomicReference<>();
                         references.add(i, reference);
-                        final ClientRequest request = new ClientRequest().setMethod(Methods.GET).setPath("/get?name=Steve");
+                        final ClientRequest request = new ClientRequest().setMethod(Methods.GET)
+                                .setPath("/get?name=Steve");
                         request.getRequestHeaders().put(Headers.HOST, "localhost");
                         connection.sendRequest(request, client.createClientCallback(reference, latch));
                     }
@@ -109,7 +131,9 @@ public class Http2ClientExample {
                 String body = reference.get().getAttachment(Http2Client.RESPONSE_BODY);
             }
         } finally {
-            IoUtils.safeClose(connection);
+
+            client.restore(token);
+
         }
     }
 
@@ -117,7 +141,20 @@ public class Http2ClientExample {
         final Http2Client client = Http2Client.getInstance();
         final List<AtomicReference<ClientResponse>> references = new CopyOnWriteArrayList<>();
         final CountDownLatch latch = new CountDownLatch(round);
-        final ClientConnection connection = client.connect(new URI("https://localhost:8443"), Http2Client.WORKER, Http2Client.SSL, Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true)).get();
+        final SimpleConnectionHolder.ConnectionToken token;
+
+        try {
+
+            token = client.borrow(new URI("https://localhost:8443"), Http2Client.WORKER, Http2Client.SSL,
+                    Http2Client.BUFFER_POOL, OptionMap.create(UndertowOptions.ENABLE_HTTP2, true));
+
+        } catch (Exception e) {
+
+            throw new ClientException(e);
+
+        }
+
+        final ClientConnection connection = (ClientConnection) token.getRawConnection();
         try {
             connection.getIoThread().execute(new Runnable() {
                 @Override
@@ -137,7 +174,9 @@ public class Http2ClientExample {
                 String body = reference.get().getAttachment(Http2Client.RESPONSE_BODY);
             }
         } finally {
-            IoUtils.safeClose(connection);
+
+            client.restore(token);
+
         }
     }
 
@@ -146,14 +185,15 @@ public class Http2ClientExample {
                 .connectTimeout(Duration.ofSeconds(10))
                 .sslContext(Http2Client.createSSLContext())
                 .build();
-        for(int i = 0; i < round; i++) {
+        for (int i = 0; i < round; i++) {
             HttpRequest request = HttpRequest.newBuilder()
                     .GET()
                     .uri(URI.create("https://localhost:8443/get?name=Steve"))
                     .build();
-            CompletableFuture<HttpResponse<String>> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            CompletableFuture<HttpResponse<String>> response = client.sendAsync(request,
+                    HttpResponse.BodyHandlers.ofString());
             String body = response.thenApply(HttpResponse::body).get();
-            //System.out.println(body);
+            // System.out.println(body);
         }
     }
 
@@ -162,13 +202,14 @@ public class Http2ClientExample {
                 .connectTimeout(Duration.ofSeconds(10))
                 .sslContext(Http2Client.createSSLContext())
                 .build();
-        for(int i = 0; i < round; i++) {
+        for (int i = 0; i < round; i++) {
 
             HttpRequest request = HttpRequest.newBuilder()
                     .POST(HttpRequest.BodyPublishers.ofString("Steve"))
                     .uri(URI.create("https://localhost:8443/post"))
                     .build();
-            CompletableFuture<HttpResponse<String>> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+            CompletableFuture<HttpResponse<String>> response = client.sendAsync(request,
+                    HttpResponse.BodyHandlers.ofString());
             String body = response.thenApply(HttpResponse::body).get();
         }
     }
@@ -187,7 +228,7 @@ public class Http2ClientExample {
         SSLSocketFactory sslSocketFactory;
         X509TrustManager trustManager;
         try {
-            trustManager = (X509TrustManager)getTrustManager();
+            trustManager = (X509TrustManager) getTrustManager();
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, new TrustManager[] { trustManager }, null);
             sslSocketFactory = sslContext.getSocketFactory();
@@ -208,14 +249,14 @@ public class Http2ClientExample {
 
     public void testMultipleOkhttpClientGet(int round) throws Exception {
         OkHttpClient client = getOkHttpClient();
-        for(int i = 0; i < round; i++) {
+        for (int i = 0; i < round; i++) {
             String body = run(client, "https://localhost:8443/get?name=Steve");
         }
     }
 
     public void testMultipleOkhttpClientPost(int round) throws Exception {
         OkHttpClient client = getOkHttpClient();
-        for(int i = 0; i < round; i++) {
+        for (int i = 0; i < round; i++) {
             RequestBody body = RequestBody.create("Steve", TEXT);
             Request request = new Request.Builder()
                     .url("https://localhost:8443/post")
@@ -230,7 +271,7 @@ public class Http2ClientExample {
     private TrustManager getTrustManager() {
         TrustManager[] trustManagers = null;
         try {
-            Map<String, Object> tlsMap = (Map<String, Object>)ClientConfig.get().getMappedConfig().get(TLS);
+            Map<String, Object> tlsMap = (Map<String, Object>) ClientConfig.get().getMappedConfig().get(TLS);
             Boolean loadTrustStore = (Boolean) tlsMap.get(LOAD_TRUST_STORE);
             if (loadTrustStore != null && loadTrustStore) {
                 String trustStoreName = System.getProperty(TRUST_STORE_PROPERTY);
@@ -241,12 +282,11 @@ public class Http2ClientExample {
                     trustStorePass = (String) tlsMap.get(TRUST_STORE_PASS);
                 }
                 if (trustStoreName != null && trustStorePass != null) {
-                    KeyStore trustStore = TlsUtil.loadTrustStore(trustStoreName, trustStorePass.toCharArray());
-                    TLSConfig tlsConfig = TLSConfig.create(tlsMap, (String)tlsMap.get(TLSConfig.DEFAULT_GROUP_KEY));
-
-                    TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                    KeyStore trustStore = TlsUtil.loadKeyStore(trustStoreName, trustStorePass.toCharArray());
+                    TrustManagerFactory trustManagerFactory = TrustManagerFactory
+                            .getInstance(KeyManagerFactory.getDefaultAlgorithm());
                     trustManagerFactory.init(trustStore);
-                    trustManagers = ClientX509ExtendedTrustManager.decorate(trustManagerFactory.getTrustManagers(), tlsConfig);
+                    trustManagers = trustManagerFactory.getTrustManagers();
                 }
             }
         } catch (NoSuchAlgorithmException | KeyStoreException e) {
