@@ -1,7 +1,7 @@
 package com.networknt.client;
 
 import com.networknt.client.ssl.ClientX509ExtendedTrustManager;
-import com.networknt.client.simplepool.SimpleConnectionHolder;
+import com.networknt.client.simplepool.SimpleConnectionState;
 import com.networknt.client.ssl.TLSConfig;
 import com.networknt.config.TlsUtil;
 import com.networknt.exception.ClientException;
@@ -98,7 +98,7 @@ public class Http2ClientExample {
         final Http2Client client = Http2Client.getInstance();
         final List<AtomicReference<ClientResponse>> references = new CopyOnWriteArrayList<>();
         final CountDownLatch latch = new CountDownLatch(round);
-        final SimpleConnectionHolder.ConnectionToken token;
+        final SimpleConnectionState.ConnectionToken token;
 
         try {
 
@@ -141,7 +141,7 @@ public class Http2ClientExample {
         final Http2Client client = Http2Client.getInstance();
         final List<AtomicReference<ClientResponse>> references = new CopyOnWriteArrayList<>();
         final CountDownLatch latch = new CountDownLatch(round);
-        final SimpleConnectionHolder.ConnectionToken token;
+        final SimpleConnectionState.ConnectionToken token;
 
         try {
 
