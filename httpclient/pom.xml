@@ -16,7 +16,7 @@
         <version.okhttp>4.9.0</version.okhttp>
         <version.slf4j>2.0.17</version.slf4j>
         <version.logback>1.5.26</version.logback>
-        <version.junit>4.13.2</version.junit>
+        <version.junit>5.11.4</version.junit>
         <versions.maven-version>2.4</versions.maven-version>
         <version.javadoc-packagelist-plugin>1.0.0</version.javadoc-packagelist-plugin>
         <version.maven-javadoc>3.4.1</version.maven-javadoc>
@@ -25,7 +25,7 @@
         <version.maven-compiler>3.8.1</version.maven-compiler>
         <version.maven-deploy>2.8.2</version.maven-deploy>
         <version.exec-maven>1.6.0</version.exec-maven>
-        <version.maven-surefire>2.22.2</version.maven-surefire>
+        <version.maven-surefire>3.5.2</version.maven-surefire>
         <version.maven-source>3.1.0</version.maven-source>
         <version.undertow>2.3.22.Final</version.undertow>
         <version.assertj>3.27.7</version.assertj>
@@ -59,6 +59,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <defaultGoal>install</defaultGoal>
@@ -116,6 +122,11 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${version.maven-surefire}</version>
+            </plugin>
         </plugins>
     </build>
 </project>
