@@ -10,7 +10,7 @@
     <name>httpclient</name>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.light-4j>2.3.5-SNAPSHOT</version.light-4j>
         <version.okhttp>4.9.0</version.okhttp>
